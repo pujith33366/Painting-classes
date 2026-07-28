@@ -11,11 +11,7 @@ service cloud.firestore {
     // Note: Replace "REPLACE_WITH_ADMIN_FIREBASE_UID" with your real Firebase Auth UID,
     // or check against custom claims / email if configured in Firebase Authentication.
     function isAdmin() {
-      return isAuthenticated() && (
-        request.auth.uid == "REPLACE_WITH_ADMIN_FIREBASE_UID" ||
-        request.auth.token.email == "admin@paintingstudio.art" ||
-        request.auth.token.email == "paintingstudiollc@gmail.com"
-      );
+      return isAuthenticated() && request.auth.uid == "REPLACE_WITH_ADMIN_FIREBASE_UID";
     }
 
     // ============================================================
