@@ -26,8 +26,8 @@ const hasValidConfig =
   firebaseConfig.apiKey !== 'your_api_key_here' &&
   firebaseConfig.apiKey !== 'undefined';
 
-// In live production builds (import.meta.env.PROD), strictly forbid falling back to Demo Mode
-export const isDemoMode = !hasValidConfig && !import.meta.env.PROD;
+// If keys are missing, enable Demo Mode. We allow this in production so you can host the portfolio on Netlify!
+export const isDemoMode = !hasValidConfig;
 
 let app;
 let auth;
