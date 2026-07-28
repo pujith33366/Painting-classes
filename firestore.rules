@@ -1,0 +1,61 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Helper function to check if user is logged in
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    // Helper function to check if the user is the studio admin
+    // Note: Replace "REPLACE_WITH_ADMIN_FIREBASE_UID" with your real Firebase Auth UID,
+    // or check against custom claims / email if configured in Firebase Authentication.
+    function isAdmin() {
+      return isAuthenticated() && (
+        request.auth.uid == "REPLACE_WITH_ADMIN_FIREBASE_UID" ||
+        request.auth.token.email == "admin@paintingstudio.art" ||
+        request.auth.token.email == "paintingstudiollc@gmail.com"
+      );
+    }
+
+    // ============================================================
+    // WORKSHOP CLASSES & SESSIONS
+    // Public visitors can read class schedules and workshop info
+    // Only studio staff / admin can create, update, or delete classes
+    // ============================================================
+    match /classes/{classId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // ============================================================
+    // ENROLLED STUDENTS ROSTER
+    // STRICT PRIVACY: Only studio admin can access student profiles
+    // Parents can only read/update their own children's records
+    // ============================================================
+    match /students/{studentId} {
+      allow read, write: if isAdmin() || (isAuthenticated() && request.auth.uid == resource.data.parentUid);
+      allow create: if isAuthenticated();
+    }
+
+    // ============================================================
+    // PAYMENT LEDGERS & TRANSACTIONS
+    // STRICT PRIVACY: Only studio admin can access financial records
+    // Parents can only read their own payment history
+    // ============================================================
+    match /payments/{paymentId} {
+      allow read: if isAdmin() || (isAuthenticated() && request.auth.uid == resource.data.parentUid);
+      allow write: if isAdmin();
+    }
+
+    // ============================================================
+    // STUDIO SETTINGS & CONFIGURATION
+    // Public can read basic studio info (e.g. contact phone, open hours)
+    // Only studio admin can update settings (Zelle phone, payment terms)
+    // ============================================================
+    match /settings/{settingId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+  }
+}

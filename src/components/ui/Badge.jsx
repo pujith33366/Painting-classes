@@ -1,0 +1,8 @@
+export default function Badge({ children, variant = 'neutral', className = '' }) {
+  const variantClass = `badge-${variant}`;
+  return (
+    <span className={`badge ${variantClass} ${className}`}>
+      {children}
+    </span>
+  );
+}
