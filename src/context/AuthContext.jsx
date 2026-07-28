@@ -32,11 +32,8 @@ export function AuthProvider({ children }) {
 
     const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
       if (firebaseUser) {
-        // Secure verification: strictly check UID or exact authorized studio emails
-        const isAdminUser =
-          firebaseUser.uid === ADMIN_UID ||
-          firebaseUser.email?.toLowerCase() === 'admin@paintingstudio.art' ||
-          firebaseUser.email?.toLowerCase() === 'paintingstudiollc@gmail.com';
+        // Secure verification: strictly check UID
+        const isAdminUser = firebaseUser.uid === ADMIN_UID;
 
         setUser({
           uid: firebaseUser.uid,
@@ -67,11 +64,8 @@ export function AuthProvider({ children }) {
       setLoading(true);
       const res = await signInWithPopup(auth, googleProvider);
       const firebaseUser = res.user;
-      // Secure verification: strictly check UID or exact authorized studio emails
-      const isAdminUser =
-        firebaseUser.uid === ADMIN_UID ||
-        firebaseUser.email?.toLowerCase() === 'admin@paintingstudio.art' ||
-        firebaseUser.email?.toLowerCase() === 'paintingstudiollc@gmail.com';
+      // Secure verification: strictly check UID
+      const isAdminUser = firebaseUser.uid === ADMIN_UID;
 
       const userData = {
         uid: firebaseUser.uid,
